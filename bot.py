@@ -1,5 +1,5 @@
 try:
-  import telebot, vk_api, time, threading, requests, os, vk_captchasolver as vc
+  import telebot, vk_api, time, requests, os, vk_captchasolver as vc
   from telebot import types
   from time import sleep
 
