@@ -4,7 +4,7 @@ try:
 	from time import sleep
 	from selenium import webdriver
 
-	bot = telebot.TeleBot('1639945945:AAFCziHtYMHdGdQAkM07CKCmDLd1QNVT-xw')
+	bot = telebot.TeleBot('1773087186:AAGK6NGqdMCafNraCvR3KmWx9-y_wNonj6c')
 
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 	item1 = types.KeyboardButton('старт')
@@ -68,14 +68,17 @@ try:
 	    if mess == "/start":
 	        bot.send_message(messages, f"Привет! \nРады видеть тебя в нашей группе 😊", reply_markup=markup)
 	    elif mess == 'cтарт' and kk != False and k != False:
-	        nak(messages)
 	        bot.send_message(messages, f"Запущено!", reply_markup=markup)
+	        nak(messages)
 	    elif mess[0:3] == 'лог':
 	        kk = str(mess[4:])
 	        bot.send_message(messages, f"Готово", reply_markup=markup)
 	    elif mess[0:3] == 'пар':
 	        k = str(mess[3:])
 	        bot.send_message(messages, f"Готово", reply_markup=markup)
+	    elif mess == 'дан':
+	        bot.send_message(messages,str(kk)+ ' ' + str(k), reply_markup=markup)
+
 	bot.polling(none_stop=True, interval=0)
 except:
 	os.system('python bot.py')
