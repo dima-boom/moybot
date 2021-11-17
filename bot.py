@@ -4,7 +4,7 @@ try:
 	from time import sleep
 	from selenium import webdriver
 
-	bot = telebot.TeleBot('1773087186:AAGK6NGqdMCafNraCvR3KmWx9-y_wNonj6c')
+	bot = telebot.TeleBot('1639945945:AAFCziHtYMHdGdQAkM07CKCmDLd1QNVT-xw')
 
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 	item1 = types.KeyboardButton('старт')
