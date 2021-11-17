@@ -77,7 +77,7 @@ try:
 	        k = str(mess[3:])
 	        bot.send_message(messages, f"Готово", reply_markup=markup)
 	    elif mess == 'дан':
-	        bot.send_message(messages,str(kk)+ ' ' + str(k), reply_markup=markup)
+	        bot.send_message(messages,f'{kk} {k}', reply_markup=markup)
 
 	bot.polling(none_stop=True, interval=0)
 except:
