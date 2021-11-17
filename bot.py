@@ -1,6 +1,8 @@
 try:
-	import telebot, time, threading, requests, filemath, os, pathlib
+	import telebot, requests, os
 	from telebot import types
+	from time import sleep
+	from selenium import webdriver
 
 	bot = telebot.TeleBot('1773087186:AAGK6NGqdMCafNraCvR3KmWx9-y_wNonj6c')
 
@@ -59,6 +61,7 @@ try:
 	@bot.message_handler()
 	def get_text_messages(message):
 	    global kk
+	    global k
 	    admin = 1455683626    
 	    messages = message.from_user.id
 	    mess = message.text.lower()
