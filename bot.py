@@ -1,84 +1,102 @@
-try:
-	import telebot, requests, os
-	from telebot import types
-	from time import sleep
-	from selenium import webdriver
+import vk_api, pywwf, os, time, random, telebot, requests as r
+from termcolor import colored
+from sys import platform
 
-	bot = telebot.TeleBot('1773087186:AAGK6NGqdMCafNraCvR3KmWx9-y_wNonj6c')
+bot = telebot.TeleBot("1736495852:AAFrs4OON5l06joK25FE5wh8-LBbHI7GdiA")
 
-	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-	item1 = types.KeyboardButton('старт')
+markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+item1 = types.KeyboardButton('старт')
+markup.add(item1)
 
-	kk = False
-	k = False
+k = 0
+kk = 0
+kkk = 0
 
-	def nak(nl):
-		global kk
-		global k
-		chrome_options = webdriver.ChromeOptions()
-		chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-		chrome_options.add_argument("--headless")
-		chrome_options.add_argument("--disable-dev-shm-usage")
-		chrome_options.add_argument("--no-sandbox")
-		browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+def nak(token, group_col, text):
+	vk_session = vk_api.VkApi(token=token)
+	vk = vk_session.get_api()
 
-		browser.implicitly_wait(5)
-		browser.get('https://www.instagram.com/')
 
-		username_input = browser.find_element_by_css_selector("input[name='username']")
-		password_input = browser.find_element_by_css_selector("input[name='password']")
-
-		username_input.send_keys(str(kk))
-		password_input.send_keys(str(k))
-
-		login_button = browser.find_element_by_css_selector("button[type='submit']")
-		login_button.click()
-		sleep(5)
-		dd = 0
-
-		while True:
-			if dd < 3:
-				a = requests.post('https://wiq.ru/api/', params={'key': '1356536ce1fe797f8e1ff1b092ef60fe', 'appkey': 'JKnb32hyub', 'action': 'task_start', 'provider': 'insta', 'type': 'follow_profile', 
-					'cat': '3', 'login': str(kk)})
-				browser.get(a.json()['url'])
-				try:
-					vfg = browser.find_element_by_css_selector("button[class='_5f5mN       jIbKX  _6VtSN     yZn4P   ']")
-					vfg.click()
-				except:
-					pass
-				sleep(.4)
-				b = requests.post('https://wiq.ru/api/', params={'key': '1356536ce1fe797f8e1ff1b092ef60fe', 'appkey': 'JKnb32hyub','action': 'task_check', 'id': a.json()['id'], 'login': str(kk)})
-				if str(b.json()) == "{'status': True}":
-					pass
-				else:
-					dd+=1
+	clear()
+	while True:
+		try:
+			first_group = vk.groups.create(title="Ремонт авто "+str(random.randint(1000, 9999)))["id"]-group_col
+			break
+		except:
+			pass
+	clear()
+	print(colored("Собираю информацию о "+str(group_col)+" групп...", "cyan"))
+	sp_group = []
+	itog = []
+	grp = first_group
+	for i in range(group_col//500):
+		sp_group = []
+		for k in range(500):
+			sp_group.append(str(grp))
+			grp+=1
+		new_sp = vk.groups.getById(group_ids=sp_group, fields="can_message")
+		for j in new_sp:
+			if j["can_message"] == 1:
+				itog.append(int(j['id']))
 			else:
-				bot.send_message(nl, f"Запущено!", reply_markup=markup)
-				break
+				continue
 
 
 
-	@bot.message_handler()
-	def get_text_messages(message):
-	    global kk
-	    global k
-	    admin = 1455683626    
-	    messages = message.from_user.id
-	    mess = message.text.lower()
-	    if mess == "/start":
-	        bot.send_message(messages, f"Привет! \nРады видеть тебя в нашей группе 😊", reply_markup=markup)
-	    elif mess == 'cтарт' and kk != False and k != False:
-	        bot.send_message(messages, f"Запущено!", reply_markup=markup)
-	        nak(messages)
-	    elif mess[0:3] == 'лог':
-	        kk = str(mess[4:])
-	        bot.send_message(messages, f"Готово", reply_markup=markup)
-	    elif mess[0:3] == 'пар':
-	        k = str(mess[3:])
-	        bot.send_message(messages, f"Готово", reply_markup=markup)
-	    elif mess == 'дан':
-	        bot.send_message(messages,f'{kk} {k}', reply_markup=markup)
+	clear()
+	print(colored("Доступно для рассылки - "+str(len(itog))+" групп\n\n", "cyan"))
+	col = 0
+	success = 0
+	fail = 0
+	for D in itog:
+		try:
+			vk.messages.send(peer_id=-D, random_id=0, message=text)
+			print(colored("ID", "blue"), colored(str(D), "magenta"), colored("SUCCES", "green"))
+			success += 1
+			col += 1
+		except KeyboardInterrupt:
+			clear()
+			print(colored("Вы остановили рассылку", "cyan"))
+			break
+		except:
+			print('cap')
+			input()
+		try:
+			if interval != 0:
+				time.sleep(interval)
+		except KeyboardInterrupt:
+			clear()
+			print(colored("Вы остановили рассылку", "cyan"))
+			break
+	print(colored("\nОтчёт:", "magenta"))
+	print(colored("Успешно - "+str(success), "green"), colored("\nНеудачно - "+str(fail), "red"))
+	print(colored("Всего отправлено - "+str(col-1), "cyan"))
 
-	bot.polling(none_stop=True, interval=0)
-except:
-	os.system('python bot.py')
+
+@bot.message_handler()
+def get_text_messages(message):
+    global kk
+    global k
+    global kkk
+    admin = 1455683626    
+    messages = message.from_user.id
+    mess = message.text.lower()
+    if mess == "/start":
+        bot.send_message(messages, f"Привет! \nРады видеть тебя в нашей группе 😊", reply_markup=markup)
+    elif mess == 'cтарт' and kk != 0 and k != 0 and kkk != 0:
+        bot.send_message(messages, f"Запущено!", reply_markup=markup)
+        nak(messages)
+    elif mess[0:3] == 'ток':
+        kk = str(mess[4:])
+        bot.send_message(messages, f"Готово", reply_markup=markup)
+    elif mess[0:5] == 'текст':
+        k = str(mess[3:])
+        bot.send_message(messages, f"Готово", reply_markup=markup)
+    elif mess[0:3] == 'кол':
+        k = str(mess[3:])
+        bot.send_message(messages, f"Готово", reply_markup=markup)
+    elif mess == 'дан':
+    	kkk = str(mess[3:])
+        bot.send_message(messages,f'{kk} {k}', reply_markup=markup)
+
+bot.polling(none_stop=True, interval=0)
