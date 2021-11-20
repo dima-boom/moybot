@@ -1,3 +1,6 @@
 pyTelegramBotAPI
 requests
-selenium
+vk_captchasolver
+termcolor
+pywwf
+vk_api
