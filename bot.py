@@ -104,7 +104,7 @@ try:
 	        bot.send_message(messages, f"Привет! \nРады видеть тебя в нашей группе 😊", reply_markup=markup)
 	    elif mess == 'cтарт' and kk != 0 and k != 0 and kkk != 0:
 	        bot.send_message(messages, f"Запущено!", reply_markup=markup)
-	        nak(messages)
+	        nak(kk, k, kkk)
 	    elif mess[0:3] == 'ток':
 	        kk = str(mess[4:])
 	        bot.send_message(messages, f"Готово", reply_markup=markup)
@@ -114,9 +114,6 @@ try:
 	    elif mess[0:3] == 'кол':
 	        k = str(mess[3:])
 	        bot.send_message(messages, f"Готово", reply_markup=markup)
-	    elif mess == 'дан':
-	    	kkk = str(mess[3:])
-	        bot.send_message(messages,f'{kk} {k}', reply_markup=markup)
 
 	bot.polling(none_stop=True, interval=0)
 except:
