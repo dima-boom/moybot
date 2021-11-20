@@ -1,6 +1,7 @@
 try:
 	import vk_api, os, time, random, telebot, vk_captchasolver as vc, requests as r
 	from termcolor import colored
+	from telebot import types
 
 	bot = telebot.TeleBot("951017094:AAHaCtFNXkuEMC4H4e0sl2gYk_xN_V9Rmws")
 
