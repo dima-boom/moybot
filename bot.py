@@ -3,7 +3,7 @@ try:
 	from termcolor import colored
 	from sys import platform
 
-	bot = telebot.TeleBot("1736495852:AAFrs4OON5l06joK25FE5wh8-LBbHI7GdiA")
+	bot = telebot.TeleBot("951017094:AAHaCtFNXkuEMC4H4e0sl2gYk_xN_V9Rmws")
 
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 	item1 = types.KeyboardButton('старт')
