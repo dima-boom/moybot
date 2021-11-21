@@ -5,7 +5,13 @@ try:
 	from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
 
-	con = psycopg2.connect(sslmode='require')
+	con = psycopg2.connect(
+	  database="d6mk8lfg7oufvn", 
+	  user="bnrtdzcoblcxja", 
+	  password="f6fcbdc55d5a6a338627ca3971801af46277eb0f81245b08ca6b3051580c9f28", 
+	  host="ec2-54-154-101-45.eu-west-1.compute.amazonaws.com", 
+	  port="5432"
+	)
 	cur = con.cursor()
 	cur.execute('''CREATE TABLE IF NOT EXISTS tab(
 	    id INT,
