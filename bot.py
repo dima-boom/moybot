@@ -1,120 +1,220 @@
 try:
-	import vk_api, os, time, random, telebot, vk_captchasolver as vc, requests as r
-	from termcolor import colored
-	from telebot import types
-
-	bot = telebot.TeleBot("951017094:AAHaCtFNXkuEMC4H4e0sl2gYk_xN_V9Rmws")
-
-	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-	item1 = types.KeyboardButton('старт')
-	markup.add(item1)
-
-	k = 0
-	kk = 0
-	kkk = 0
-
-	def nak(token, group_col, text):
-		vk_session = vk_api.VkApi(token=token)
-		vk = vk_session.get_api()
-		while True:
-			try:
-				first_group = vk.groups.create(title="Ремонт авто "+str(random.randint(1000, 9999)))["id"]-group_col
-				break
-			except vk_api.Captcha as group_captch:
-				print(colored("Решаю капчу при создании группы...", "yellow"))
-				result_solve_captcha = vc.solve(sid=int(group_captch.sid), s=1)
-				try:
-					group_captch.try_again(result_solve_captcha)
-					print(colored("Капча решена!", "green"))
-				except vk_api.Captcha as cptch2:
-					print(colored("Не удача", "red"))
-		clear()
-		print(colored("Собираю информацию о "+str(group_col)+" групп...", "cyan"))
-		sp_group = []
-		itog = []
-		grp = first_group
-		for i in range(group_col//500):
-			sp_group = []
-			for k in range(500):
-				sp_group.append(str(grp))
-				grp+=1
-			new_sp = vk.groups.getById(group_ids=sp_group, fields="can_message")
-			for j in new_sp:
-				if j["can_message"] == 1:
-					itog.append(int(j['id']))
-				else:
-					continue
+	import vk_api, requests, time, threading, psycopg2 
+	from vk_api.longpoll import VkLongPoll, VkEventType
+	from vk_api.utils import get_random_id
+	from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
 
+	con = psycopg2.connect(sslmode='require')
+	cur = con.cursor()
+	cur.execute('''CREATE TABLE IF NOT EXISTS tab(
+	    id INT,
+	    bal INT,
+	    clava INT,
+	    rozg INT);''')
+	con.commit()  
 
-		clear()
-		print(colored("Доступно для рассылки - "+str(len(itog))+" групп\n\n", "cyan"))
-		col = 0
-		success = 0
+	print("Бот запущен!")
+	keyboard = VkKeyboard(one_time=False)
+	# 1
+	keyboard.add_button('Розыгрыши 🎉', color=VkKeyboardColor.PRIMARY)
+	keyboard.add_line()
+	keyboard.add_button('Баланс 💰', color=VkKeyboardColor.PRIMARY)
+	keyboard.add_button('Пополнить 💳', color=VkKeyboardColor.PRIMARY)
+
+	clava2 = VkKeyboard(one_time=False)
+	clava2.add_button('Оплата Qiwi 🥝', color=VkKeyboardColor.PRIMARY)
+	clava2.add_line()
+	clava2.add_button('Назад ↩', color=VkKeyboardColor.SECONDARY)
+
+	clava3 = VkKeyboard(one_time=False)
+	clava3.add_button('№1', color=VkKeyboardColor.SECONDARY)
+	clava3.add_button('№2', color=VkKeyboardColor.SECONDARY)
+	clava3.add_line()
+	clava3.add_button('№3', color=VkKeyboardColor.SECONDARY)
+	clava3.add_button('№4', color=VkKeyboardColor.SECONDARY)
+	clava3.add_line()
+	clava3.add_button('Назад ↩', color=VkKeyboardColor.SECONDARY)
+
+	clava4 = VkKeyboard(one_time=False)
+	clava4.add_button('Назад ↩', color=VkKeyboardColor.SECONDARY)
+
+	def extract_arg(arg):
+	    return arg.split()[1]
+
+
+	def extract_arg2(arg2):
+	    return arg2.split()[2]
+
+	def write_message(sender, message):
+	    if i == 0:
+		authorize.method('messages.send', {'user_id': sender, 'message': message, "random_id": get_random_id(),
+							   'keyboard': keyboard.get_keyboard()})
+	    if i == 1:
+		authorize.method('messages.send', {'user_id': sender, 'message': message, "random_id": get_random_id(),
+						   'keyboard': clava2.get_keyboard()})
+	    if i == 2:
+		authorize.method('messages.send', {'user_id': sender, 'message': message, "attachment": "audio574170405_456239051,audio574170405_456239053,audio574170405_456239054,audio574170405_456239055", "random_id": get_random_id(),
+						   'keyboard': clava3.get_keyboard()})
+	    if i == 3:
+		authorize.method('messages.send', {'user_id': sender, 'message': message,"random_id": get_random_id(),
+						   'keyboard': clava4.get_keyboard()})
+
+	def new_polz(send):
+	    # Добавление записи
+	    cur.execute(f"SELECT bal FROM tab WHERE id = '{send}'")
+	    if str(cur.fetchall()) == '[]':
+		cur.execute(f"""INSERT INTO tab (id, bal, clava) VALUES ({send}, 0, 0);""")
+		con.commit()
+	    else:
+		pass
+	def ras(text):
+	    # Рaссылка
+	    cur.execute("SELECT * FROM tab")
+	    for it in cur.fetchall():
+		succes = 0
 		fail = 0
-		for D in itog:
+		try:
+		    authorize.method('messages.send', {'user_id': str(it[0]), 'message': str(text), "random_id": get_random_id()})
+		    succes +=1
+		except:
+		    fail +=1
+	    write_message(admin, "Рассылку получило - " + str(succes) + " пользователей")
+	    write_message(admin, "Заблокировали бота - " + str(fail) + " пользователей")
+	def obnova(send, cym, zn):
+	    global bal
+	    cur.execute(f"SELECT bal FROM tab WHERE id = '{send}'")
+	    if zn == 1:
+		opop = int(cur.fetchall()[0][0]) + int(cym)
+	    else:
+		opop = int(cur.fetchall()[0][0]) - int(cym)
+	    # Обнова
+	    cur.execute(f"""UPDATE tab SET bal = {opop} WHERE id = {send}""")
+	    con.commit() 
+	def clava_n(send, zn):
+	    global i
+	    cur.execute(f"""UPDATE tab SET clava = {int(zn)} WHERE id = {send}""")
+	    con.commit()
+	    i = zn
+
+	def pran(send, zn):
+	    global roz
+	    cur.execute(f"""UPDATE tab SET clava = {int(zn)} WHERE id = {send}""")
+	    con.commit()
+	    roz = zn
+	def clava(send):
+	    global i
+	    cur.execute(f"SELECT clava FROM tab WHERE id = '{send}'")
+	    i = cur.fetchall()[0][0]
+	def balans(send):
+	    global bal
+	    cur.execute(f"SELECT bal FROM tab WHERE id = '{send}'")
+	    bal = cur.fetchall()[0][0]
+	def prank(send):
+	    global roz
+	    cur.execute(f"SELECT rozg FROM tab WHERE id = '{send}'")
+	    roz = cur.fetchall()[0][0]
+
+
+	token = "57472ab3e22c6402eae9ab38f55df784f8ec8063c15afff4763089e31dd931591f16455dad565630d36e2"
+	authorize = vk_api.VkApi(token=token)
+	longpoll = VkLongPoll(authorize)
+	admin = 685062634
+	for event in longpoll.listen():
+	    if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+		reseived_message = event.text.lower()
+		sender = event.user_id
+		new_polz(sender)
+		clava(sender)
+		if reseived_message == 'начать' \
+			or reseived_message == 'начать' \
+			or reseived_message == 'привет'\
+			or reseived_message == 'ку'\
+			or reseived_message == 'хай' \
+			or reseived_message == 'здравствуйте' \
+			or reseived_message == 'start' \
+			or reseived_message == 'дарова':
+		    user = authorize.method("users.get", {"user_ids": event.user_id})  # вместо 1 подставляете айди нужного юзера
+		    name = user[0]['first_name']
+		    write_message(sender, "Привет, " + name + '! \nРады видеть тебя в нашей группе 😊')
+		    write_message(sender, 'Вы в главном меню: \n\n- Розыгрыши \n- Баланс \n- Пополнить')
+
+		elif reseived_message[0:6] == "баланс":
+		    balans(sender)
+		    write_message(sender, "Твой баланс: " + str(bal) + " руб.")
+		elif reseived_message == '№1' and i == 2:
+		    pran(sender, 1)
+		    clava_n(sender, 3)
+		    write_message(sender, 'Введите номер: \nПример: 79283335577')
+		elif reseived_message == '№2' and i == 2:
+		    pran(sender, 2)
+		    clava_n(sender, 3)
+		    write_message(sender, 'Введите номер: \nПример: 79283335577')
+		elif reseived_message == '№3' and i == 2:
+		    pran(sender, 3)
+		    clava_n(sender, 3)
+		    write_message(sender, 'Введите номер: \nПример: 79283335577')
+		elif reseived_message == '№4' and i == 2:
+		    pran(sender, 4)
+		    clava_n(sender, 3)
+		    write_message(sender, 'Введите номер: \nПример: 79283335577')
+		elif reseived_message[0:2] == "79" and len(reseived_message) == 11 and i == 3:
+		    balans(sender)
+		    prank(sender)
+		    if bal >= 5:
+			if roz == 1:
+			    tem = 'Увела друга'
+			if roz == 2:
+			    tem = 'Гобник'
+			if roz == 3:
+			    tem = 'Человека'
+			if roz == 4:
+			    tem = 'Возмущение'
+			obnova(sender, 5, 2)
+			write_message(admin, f'Номер: {reseived_message} \nТема: {roz}')
+			write_message(sender, f'Номер: {reseived_message} \nЗвонок отправлен 😇')
+		    else:
+			write_message(sender, 'У вас недостаточно средств :(')
+		elif reseived_message[0:9] == "пополнить":
+		    clava_n(sender, 1)
+		    write_message(sender, "Выберите способ оплаты:")
+		elif reseived_message[0:11] == "оплата qiwi" and i == 1:
+			write_message(sender,
+				      'Qiwi-кошелёк: +79283692011 \nНе забудьте указать этот код в комментариях к платежу: ' + "1" + str(
+					  sender) + ' ❗ '
+						    '\n\nПосле оплаты на ваш баланс автоматически в течении минуты будет зачисленна сумма перевода, если оплата придет вам сообщат')
+		elif reseived_message[0:5] == 'назад' and i == 1 or reseived_message[0:5] == 'назад' and i == 2:
+		    clava_n(sender, 0)
+		    write_message(sender, 'Вы в главном меню: \n\n- Розыгрыши \n- Баланс \n- Пополнить')
+		elif reseived_message[0:9] == 'розыгрыши':
+		    clava_n(sender, 2)
+		    write_message(sender, 'Выберите номер розыгрыша 🎉 \nЦена: 5 руб - 1 звонок ☎')
+		elif reseived_message[0:5] == 'назад' and i == 3:
+		    clava_n(sender, 2)
+		    write_message(sender, "Выберите номер розыгрыша 🎉")
+		elif reseived_message[0:2] == "фф":
+		    if sender == admin:
 			try:
-				vk.messages.send(peer_id=-D, random_id=0, message=text)
-				print(colored("ID", "blue"), colored(str(D), "magenta"), colored("SUCCES", "green"))
-				success += 1
-				col += 1
-			except KeyboardInterrupt:
-				clear()
-				print(colored("Вы остановили рассылку", "cyan"))
-				break
-			except vk_api.Captcha:
-				print(colored("Решаю капчу...", "yellow"))
-				cycle = True
-				while cycle:
-					try:
-						vk.messages.send(peer_id=-D, random_id=0, message=text)
-					except vk_api.Captcha as cptch:
-						result_solve_captcha = vc.solve(sid=int(cptch.sid), s=1)
-						try:
-							cptch.try_again(result_solve_captcha)
-							print(colored("Капча решена!", "green"))
-							cycle = False
-						except vk_api.Captcha as cptch2:
-							print(colored("Не удача", "red"))
-					except:
-						pass
+			    id = extract_arg(reseived_message)
+			    ball = extract_arg2(reseived_message)
+			    obnova(sender, ball, 1)
+			    write_message(event.user_id, "Готово")
+			    write_message(str(id), "На ваш баланс зачислено " + str(ball) + " руб.")
 			except:
-				print(colored("ID", "blue"), colored(str(D), "magenta"), colored("FAIL", "red"))
-				fail += 1
-				col += 1
-			first_group += 1
-			try:
-				if interval != 0:
-					time.sleep(interval)
-			except KeyboardInterrupt:
-				clear()
-				print(colored("Вы остановили рассылку", "cyan"))
-				break
+			    write_message(event.user_id, "Вы не указали айди или сумму")
+		    else:
+			write_message(sender, 'Вы не являетесь администратором !!!')
 
 
-	@bot.message_handler()
-	def get_text_messages(message):
-	    global kk
-	    global k
-	    global kkk
-	    admin = 1455683626    
-	    messages = message.from_user.id
-	    mess = message.text.lower()
-	    if mess == "/start":
-	        bot.send_message(messages, f"Привет! \nРады видеть тебя в нашей группе 😊", reply_markup=markup)
-	    elif mess == 'cтарт' and kk != 0 and k != 0 and kkk != 0:
-	        bot.send_message(messages, f"Запущено!", reply_markup=markup)
-	        nak(kk, k, kkk)
-	    elif mess[0:3] == 'ток':
-	        kk = str(mess[4:])
-	        bot.send_message(messages, f"Готово", reply_markup=markup)
-	    elif mess[0:5] == 'текст':
-	        k = str(mess[3:])
-	        bot.send_message(messages, f"Готово", reply_markup=markup)
-	    elif mess[0:3] == 'кол':
-	        k = str(mess[3:])
-	        bot.send_message(messages, f"Готово", reply_markup=markup)
-
-	bot.polling(none_stop=True, interval=0)
+		elif reseived_message[0:8] == "рассылка":
+		    if sender == admin:
+			m = extract_arg(event.text)
+			t = threading.Thread(target=ras, args=(m,))
+			t.start()
+			write_message(sender, 'Запущено!')
+		    else:
+			write_message(sender, 'Вы не админ!')
+		else:
+		    write_message(sender, 'Не верное действие!')
 except:
 	os.system('python bot.py')
