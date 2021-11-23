@@ -155,7 +155,7 @@ def mmm(phone, zv):
                 with open(str(phone) + '.mp3', 'wb') as fd:
                     fd.write(b.content)
                 cc = False
-    elif v == 4:
+    elif vz == 4:
         cc = True
         requests.post(f'https://zvonok.com/manager/cabapi_external/api/v1/phones/call/?campaign_id=1082629254&phone=%2B{phone}&public_key=eea63e1f9e02ece1871846f4ab8357ac')
         while cc:
@@ -215,17 +215,18 @@ for event in longpoll.listen():
             prank(sender)
             if bal >= 5:
                 if roz == 1:
-                    tem = 'Увела друга'
+                    mmm(str(reseived_message), 1)
                 if roz == 2:
-                    tem = 'Гобник'
+                    mmm(str(reseived_message), 2)
                 if roz == 3:
-                    tem = 'Человека'
+                    mmm(str(reseived_message), 3)
                 if roz == 4:
-                    tem = 'Возмущение'
+                    mmm(str(reseived_message), 4)
                 obnova(sender, 5, 2)
-                write_message(admin, f'Номер: {reseived_message} \nТема: {roz}')
+                clava_n(sender, 0)
                 write_message(sender, f'Номер: {reseived_message} \nЗвонок отправлен 😇')
             else:
+                clava_n(sender, 1)
                 write_message(sender, 'У вас недостаточно средств :(')
         elif reseived_message[0:9] == "пополнить":
             clava_n(sender, 1)
