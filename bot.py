@@ -120,6 +120,53 @@ def prank(send):
     cur.execute(f"SELECT rozg FROM tab WHERE id = '{send}'")
     roz = cur.fetchall()[0][0]
 
+def mmm(phone, zv):
+    if zv == 1:
+        cc = True
+        requests.post(f'https://zvonok.com/manager/cabapi_external/api/v1/phones/call/?campaign_id=284357753&phone=%2B{phone}&public_key=eea63e1f9e02ece1871846f4ab8357ac')
+        while cc:
+            a = requests.post(f'https://zvonok.com/manager/cabapi_external/api/v1/phones/calls_by_phone/?campaign_id=284357753&phone=%2B{phone}&public_key=eea63e1f9e02ece1871846f4ab8357ac')
+            print(str(a.json()[0]['recorded_audio']))
+            if str(a.json()[0]['recorded_audio']) != str(None):
+                b = requests.get(str(a.json()[0]['recorded_audio']), stream=True)
+                with open(str(phone) + '.mp3', 'wb') as fd:
+                    fd.write(b.content)
+                cc = False
+    elif zv == 2:
+        cc = True
+        requests.post(f'https://zvonok.com/manager/cabapi_external/api/v1/phones/call/?campaign_id=1094511802&phone=%2B{phone}&public_key=eea63e1f9e02ece1871846f4ab8357ac')
+        while cc:
+            a = requests.post(f'https://zvonok.com/manager/cabapi_external/api/v1/phones/calls_by_phone/?campaign_id=1094511802&phone=%2B{phone}&public_key=eea63e1f9e02ece1871846f4ab8357ac')
+            print(str(a.json()[0]['recorded_audio']))
+            if str(a.json()[0]['recorded_audio']) != str(None):
+                b = requests.get(str(a.json()[0]['recorded_audio']), stream=True)
+                with open(str(phone) + '.mp3', 'wb') as fd:
+                    fd.write(b.content)
+                cc = False
+    elif zv == 3:
+        cc = True
+        requests.post(f'https://zvonok.com/manager/cabapi_external/api/v1/phones/call/?campaign_id=1211100981&phone=%2B{phone}&public_key=eea63e1f9e02ece1871846f4ab8357ac')
+
+        while cc:
+            a = requests.post(f'https://zvonok.com/manager/cabapi_external/api/v1/phones/calls_by_phone/?campaign_id=1211100981&phone=%2B{phone}&public_key=eea63e1f9e02ece1871846f4ab8357ac')
+            print(str(a.json()[0]['recorded_audio']))
+            if str(a.json()[0]['recorded_audio']) != str(None):
+                b = requests.get(str(a.json()[0]['recorded_audio']), stream=True)
+                with open(str(phone) + '.mp3', 'wb') as fd:
+                    fd.write(b.content)
+                cc = False
+    elif v == 4:
+        cc = True
+        requests.post(f'https://zvonok.com/manager/cabapi_external/api/v1/phones/call/?campaign_id=1082629254&phone=%2B{phone}&public_key=eea63e1f9e02ece1871846f4ab8357ac')
+        while cc:
+            a = requests.post(f'https://zvonok.com/manager/cabapi_external/api/v1/phones/calls_by_phone/?campaign_id=1082629254&phone=%2B{phone}&public_key=eea63e1f9e02ece1871846f4ab8357ac')
+            print(str(a.json()[0]['recorded_audio']))
+            if str(a.json()[0]['recorded_audio']) != str(None):
+                b = requests.get(str(a.json()[0]['recorded_audio']), stream=True)
+                with open(str(phone) + '.mp3', 'wb') as fd:
+                    fd.write(b.content)        
+                cc = False
+
 
 token = "57472ab3e22c6402eae9ab38f55df784f8ec8063c15afff4763089e31dd931591f16455dad565630d36e2"
 authorize = vk_api.VkApi(token=token)
