@@ -7,7 +7,7 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 con = psycopg2.connect(
   database="d6mk8lfg7oufvn", 
   user="bnrtdzcoblcxja", 
-  password="f6fcbdc55d5a6a338627ca3971801af46277eb0f81245b08ca6b3051580c9f28", 
+  password="f6fcbdc55d5a6a338627ca397180181245b08ca6b3051580c9f28", 
   host="ec2-54-154-101-45.eu-west-1.compute.amazonaws.com", 
   port="5432"
 )
@@ -122,8 +122,8 @@ def payment_history_last(my_login, api_access_token, rows_num, next_TxnId, next_
     h = s.get('https://edge.qiwi.com/payment-history/v2/persons/' + my_login + '/payments', params=parameters)
     # обязательно json все объекты в киви апи json
     return h.json()
-mylogin = '79283692011'
-api_access_token = '17b80073f6c228dde9bf1b3c7f031e4f'
+mylogin = '792011'
+api_access_token = '17b80073bf1b3c7f031e4f'
 
 def QiwiCheck(number, api):
     while True:
@@ -169,7 +169,7 @@ def mmm(phone, id):
             return
 
 
-token = "78d498303369d6dffdc3a4636a23d5ae7d2e048c7d3e27c212a3ca8d72c667ec05a83003ad0175babdb38"
+token = "78d498303369d6dffdc3a4636a23d5ae7d2e048c7d5a83003ad0175babdb38"
 authorize = vk_api.VkApi(token=token)
 longpoll = VkLongPoll(authorize)
 admin = [643773648, 685062634]
