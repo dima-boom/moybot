@@ -73,7 +73,7 @@ try:
     c116 = types.KeyboardButton('Проверить оплату.')
     clava2.add(c11)
     clava2.add(c116)
-    clava2.add(c116)
+    clava2.add(c11f)
     clava2.add(c122)
 
     ic1 = types.InlineKeyboardMarkup(row_width=2)
