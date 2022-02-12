@@ -215,7 +215,7 @@ try:
         elif mess[0:4] == 'инфа' and sender == admin:
             cur.execute("SELECT id FROM tab")
             jklj = cur.fetchall()
-            sms(sender, f'Всего: {jklj} человек.')
+            sms(sender, f'Всего: {len(jklj)} человек.')
         elif mess[0:8] == "рассылка":
             if sender == admin:
                 m = extract_arg(message.text)
