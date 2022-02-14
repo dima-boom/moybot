@@ -296,7 +296,7 @@ try:
             ob_sum = int(cy[0][0])
             if ob_sum >= 0 and ob_sum < 10:
                 yrov = 'Новичёк.'
-            elif ob_sum > 10 and ob_sum <50:
+            elif ob_sum >= 10 and ob_sum <50:
                 yrov = 'Средне-слабый.'
             elif ob_sum >= 50 and ob_sum <100:
                 yrov = 'Средний.'
