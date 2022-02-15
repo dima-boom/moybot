@@ -20,7 +20,10 @@ try:
         ctavka BIGINT,
         cyma BIGINT,
         ob_sum BIGINT,
-        id_stav BIGINT);''')
+        id_stav BIGINT,
+        ref BIGINT,
+        ref_v BIGINT,
+        ref_z BIGINT);''')
     con.commit()
 
     cur.execute('''CREATE TABLE IF NOT EXISTS spis(
@@ -44,6 +47,9 @@ try:
     c1.add(item15, item16)
     c1.add(item17)
 
+    c137 = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    w1iii = types.KeyboardButton('У меня нет кода!')
+    c137.add(w1iii)
 
     c122 = types.KeyboardButton('Назад ↩')
 
@@ -124,6 +130,20 @@ try:
         # Обнова
         cur.execute(f"""UPDATE tab SET id_stav = {opop} WHERE id = {send}""")
         con.commit() 
+    def obnova4(send):
+        cur.execute(f"SELECT ref_v FROM tab WHERE id = '{send}'")
+        opop = int(cur.fetchall()[0][0]) + int(1)
+        # Обнова
+        cur.execute(f"""UPDATE tab SET ref_v = {opop} WHERE id = {send}""")
+        con.commit()
+    def obnova5(send, cym):
+        cur.execute(f"SELECT ref_z FROM tab WHERE id = '{send}'")
+        opop = int(cur.fetchall()[0][0]) + int(float(cym))
+        obnova(sender, int(float(cym)))
+        # Обнова
+        cur.execute(f"""UPDATE tab SET ref_z = {opop} WHERE id = {send}""")
+        con.commit()
+
 
     def sms1(messs, smm, clava):
         bot.send_message(messs, smm, reply_markup=clava)
@@ -169,6 +189,10 @@ try:
                     opop = int(cur.fetchall()[0][0]) + int(sum)
                     cur.execute(f"""UPDATE tab SET bal = {opop} WHERE id = {str(comm[3:])}""")
                     con.commit() 
+                    cur.execute(f"SELECT ref FROM tab WHERE id = '{str(comm[3:])}'")
+                    mkmk = int(cur.fetchall())
+                    ttt = int(sum * 0.05)
+                    obnova5(mkmk, ttt)
                     cur.execute(f"""UPDATE qiwi SET popo = {txnId} WHERE popo = {lastpay}""")
                     con.commit()
                     obnova2(comm[3:], sum)
@@ -202,19 +226,39 @@ try:
             infa = cur.fetchall()[0]
             ban = infa[3]
             i = infa[2]
+            n = 1
         except:
-            if str(cur.fetchall()) == '[]':
-                cur.execute(f"""INSERT INTO tab (id, bal, clava, ban, ctavka, cyma, ob_sum, id_stav) VALUES ({sender}, 0, 1, 1, 0, 0, 0, 0);""")
+            lolo = cur.fetchall()
+            if str(lolo) == '[]':
+                cur.execute(f"""INSERT INTO tab (id, bal, clava, ban, ctavka, cyma, ob_sum, id_stav, ref, ref_v, ref_z) VALUES ({sender}, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0);""")
                 con.commit()
                 ban = 1
-                i = 1
-                sms1(sender, f'Привет, {message.from_user.first_name}! 😊 \nЖелаем вам больших выигрышей ', c1)
+                i = 15
+                n=0
+                sms1(sender, f'Привет, {message.from_user.first_name}! 😊 \nВведите реверальный код:', c137)
             else:
                 pass
 
         if ban == 0:
             sms(sender, 'Ваш аккаунт заблокирован. ⛔')
 
+        elif mess[0:15] == 'у меня не кода' and i == 15:
+            clava(sender, 1)
+            sms1(sender, 'Главное меню: ', c1)
+
+        elif i == 15 and n == 1:
+            try:
+                cur.execute(f"SELECT * FROM tab WHERE id = '{mess}'")
+                if str(cur.fetchall()) != '[]':
+                    cur.execute(f"""UPDATE tab SET ref = {mess} WHERE id = {sender}""")
+                    con.commit()
+                    obnova4(mess)
+                    clava(sender, 1)
+                    sms1(sender, 'Главное меню:', c1)
+                else:
+                    sms(sender, 'Неверный код. ⛔')
+            except:
+                sms(sender, 'Ошибка. ⛔')
         elif mess[0:4] == 'инфа' and sender == admin:
             cur.execute("SELECT id FROM tab")
             jklj = cur.fetchall()
@@ -291,9 +335,9 @@ try:
                 sms(sender, 'Неверный ID. ⛔')
 
         elif mess[0:7] == 'профиль':
-            cur.execute(f"SELECT ob_sum FROM tab WHERE id = '{sender}'")
+            cur.execute(f"SELECT * FROM tab WHERE id = '{sender}'")
             cy = cur.fetchall()
-            ob_sum = int(cy[0][0])
+            ob_sum = int(cy[0][6])
             if ob_sum >= 0 and ob_sum < 10:
                 yrov = 'Новичёк.'
             elif ob_sum >= 10 and ob_sum <50:
@@ -304,7 +348,7 @@ try:
                 yrov = 'Средне-сильный.'
             elif ob_sum >= 200:
                 yrov = 'Сильный.'
-            bot.send_message(sender, f'👤 ID: `{sender}` \n♦ Уровень: {yrov}\n💰 Общая сумма по-ний: {ob_sum} руб.', parse_mode='Markdown')
+            bot.send_message(sender, f'👤 Реф-код: `{sender}` \n♦ Уровень: {yrov}\n💰 Общая сумма по-ний: {ob_sum} руб. \n👥 Реф-ов: {cy[0][9]}.\n💵 Заработано с них: {cy[0][10]} руб.', parse_mode='Markdown')
 
         elif mess[0:5] == 'назад' and i == 2 or mess[0:5] == 'назад' and i == 3 or mess[0:5] == 'назад' and i == 10:
             clava(sender, 1)
