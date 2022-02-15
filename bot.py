@@ -242,12 +242,14 @@ try:
         if ban == 0:
             sms(sender, 'Ваш аккаунт заблокирован. ⛔')
 
-        elif mess[0:15] == 'у меня не кода' and i == 15:
+        elif mess[0:15] == 'у меня нет кода' and i == 15:
             clava(sender, 1)
             sms1(sender, 'Главное меню: ', c1)
 
         elif i == 15 and n == 1:
             try:
+                if int(mess) > 0:
+                    pass
                 cur.execute(f"SELECT * FROM tab WHERE id = '{mess}'")
                 if str(cur.fetchall()) != '[]':
                     cur.execute(f"""UPDATE tab SET ref = {mess} WHERE id = {sender}""")
@@ -348,7 +350,7 @@ try:
                 yrov = 'Средне-сильный.'
             elif ob_sum >= 200:
                 yrov = 'Сильный.'
-            bot.send_message(sender, f'👤 Реф-код: `{sender}` \n♦ Уровень: {yrov}\n💰 Общая сумма по-ний: {ob_sum} руб. \n👥 Реф-ов: {cy[0][9]}.\n💵 Заработано с них: {cy[0][10]} руб.', parse_mode='Markdown')
+            bot.send_message(sender, f'👤 Реф-код: `{sender}` \n♦ Уровень: {yrov}\n💰 Общая сумма по-ний: {ob_sum} руб. \n👥 Рефералов: {cy[0][9]}.\n💵 Заработано с них: {cy[0][10]} руб.\n\n5% от их пополнеий.', parse_mode='Markdown')
 
         elif mess[0:5] == 'назад' and i == 2 or mess[0:5] == 'назад' and i == 3 or mess[0:5] == 'назад' and i == 10:
             clava(sender, 1)
@@ -517,6 +519,6 @@ try:
                 bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id, text= 'Ставки не существует ⛔ \nВозможно она уже сыграна.')
 
 
-    bot.polling()
+    bot.polling(none_stop=True, interval=0)
 except:
     os.system('python bot.py')
