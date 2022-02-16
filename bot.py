@@ -490,7 +490,7 @@ try:
                 cy = cur.fetchall()
                 bal2 = cy[0][0]
                 bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id, text= "Твой баланс: " + str(bal2) + " руб. 💰")
-                sms1(call.message.chat.id, "Введите номер Qiwi \nИ сумму вывода 💸 \nПример: \n+79283335522 50 \n+77074470707 75 \n+380443777355 100 \n+375297556655 150 \nКомиссия за вывод 20 - %", nazad)
+                sms1(call.message.chat.id, "Введите номер Qiwi \nИ сумму вывода 💸 \nПример: \n+79283335522 50 \n+77074470707 75 \n+380443777355 100 \n+375297556655 150 \nКомиссия за вывод 10 - %", nazad)
 
             elif call.data == 'ctav':
                 cur.execute(f"SELECT * FROM tab WHERE id = '{call.message.chat.id}'")
