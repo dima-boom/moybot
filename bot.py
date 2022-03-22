@@ -286,6 +286,8 @@ try:
                 else:
                     b = requests.get(f'https://sms-code.store/stubs/handler_api.php?api_key=598279d2cd5da2a7d08cf4fd0dc497&action=getStatus&id={idd}', verify=False)
                     if str(b.text.split(':')[0]) == 'STATUS_OK':
+                        cur.execute(f"""UPDATE tab SET pozi = 0 WHERE id = {call.message.chat.id}""")
+                        con.commit() 
                         cod = b.text.split(':')[1]
                         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id, text='Обноваление..')
                         bot.send_message(call.message.chat.id, f'📲 Номер: `+{nomer}`\n♦ ID: `{idd}`\n✉ SMS-Code: `{cod}` ✅', reply_markup=c1, parse_mode='Markdown')
